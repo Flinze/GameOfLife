@@ -1,109 +1,71 @@
-package ca.bcit.comp2526.a2a;
+package ca.bcit.comp2526.a2c;
 
 import java.awt.Color;
-import java.util.ArrayList;
-
-import static ca.bcit.comp2526.a2a.RandomGenerator.nextNumber;
 
 /**
- * Herbivore.
- *
- * Is an entity, part of the world
- * and can be represented as a cell.
- *
- * @author  Felix Lin
- * @version 1.0
+ * A Herbivore type Lifeform that eats Plants and dies.
+ * 
+ * @author Felix Lin
+ * @version 2.0
  */
-public class Herbivore extends Entity {
+public class Herbivore extends Lifeform {
+    
+    private static final int HERB_LIVES = 10;
 
-    private Color cellColour;
+    private static final int HERB_REQ_MATES = 2;
 
-    private Cell cell;
+    private static final int HERB_REQ_SPACE = 1;
 
-    private final int totalLives = 10;
-
-    private int lifeCount = totalLives;
+    private static final int HERB_REQ_FOOD = 2;
 
     /**
      * Constructs a herbivore.
-     *
-     * @param location the location of the cell.
+     * 
+     * @param location
+     *          the location of the cell.
      */
     public Herbivore(Cell location) {
         super(location);
-        cell = location;
-        init();
+        setColor(Color.yellow);
+        setEmptyCellsRequired(HERB_REQ_SPACE);
+        setMateCellsRequired(HERB_REQ_MATES);
+        setFoodCellsRequired(HERB_REQ_FOOD);
+        setLifeCount(HERB_LIVES);
+        setType(LifeformType.HERBIVORE);
     }
 
     /**
-     * Sets the background to be yellow.
-     */
-    public void init() {
-        cellColour = Color.YELLOW;
-        setLifeCount(totalLives);
-    }
-
-    /**
-     * Puts the herbivore on the specified cell.
-     * @param location the location of the cell to be
-     *                 placed on.
-     */
-    public void setCell(Cell location) {
-        this.cell = location;
-    }
-
-    /**
-     * Gets the colour of the cell.
+     * Gives birth to new lifeform.
      *
-     * @return the cell colour.
-     */
-    public Color getColor() {
-        return cellColour;
-    }
-
-    /**
-     * Swaps the cell that is passed in with
-     * the current cell.
+     * @param birthLocation
+     *              starting location of the new lifeform.
      *
-     * @param newCell the new Cell to be swapped with.
-     * @param randIndex A index chosen at random used to swap.
-     * @param cellList An ArrayList holding values that are used to swap.
+     * @return a lifeform, specifically a carnivore.
      */
-    private void swapCell(Cell newCell, int randIndex,
-                          ArrayList<Cell> cellList) {
-        newCell.setEntity(this);
-        cell.setEntity(new Empty(cell));
-        setCell(cellList.get(randIndex));
+    Lifeform giveBirth(Cell birthLocation) {
+        
+        return new Herbivore(birthLocation);
+    }
+
+
+    /**
+     * Resets the hunger.
+     */
+    void resetLifeCount() {
+        setLifeCount(HERB_LIVES);
     }
 
     /**
-     * Moves the herbivore one cell.
+     * Checks if the food is edible.
+     *
+     * @param food
+     *          lifeform this object is trying to eat
+     *
+     * @return if the food is edible.
      */
-    public void move() {
-        ArrayList<Cell> adjList = cell.getAdjacentCells();
-        ArrayList<Cell> edibleList = getPlants(adjList);
-        ArrayList<Cell> emptyList = getEmpty(adjList);
-
-        int numEmptyCell = emptyList.size();
-        int numAdjCell = adjList.size();
-        int numEdibleCell = edibleList.size();
-        int randIndex = nextNumber(numAdjCell);
-
-        if (numEdibleCell > 0) {
-            randIndex = nextNumber(numEdibleCell);
-            Cell tmp = edibleList.get(randIndex);
-            tmp.setEntity(this);
-            cell.setEntity(new Empty(cell));
-            setCell(edibleList.get(randIndex));
-            resetLifeCount(totalLives);
-        } else {
-            randIndex = nextNumber(numEmptyCell);
-            Cell tmp = emptyList.get(randIndex);
-            swapCell(tmp, randIndex, emptyList);
-            decreaseLifeCount();
-            checkLifeCount(getLifeCount(), cell);
-        }
-        setMoved();
+    public boolean isEdible(Lifeform food) {
+        LifeformType t = food.getType();
+        return (t == LifeformType.PLANT);
     }
 
 }

@@ -1,175 +1,137 @@
-package ca.bcit.comp2526.a2a;
+package ca.bcit.comp2526.a2c;
 
 import java.util.ArrayList;
-
-import static ca.bcit.comp2526.a2a.RandomGenerator.nextNumber;
+import java.util.List;
 
 /**
  * World.
  *
- * Cells interact within World.
+ * The world where the game of life starts.
+ * 
+ * @author Felix Lin
+ * @version 2.0
  *
- * @author  Felix Lin
- * @version 1.0
  */
 public class World {
 
-    private int turnCount;
+    private static final int RANDOM_GEN_LIMIT = 100;
+
+    private static final int HERB_PROB = 80;
+
+    private static final int PLANT_PROB = 50;
+
+    private static final int CARN_PROB = 40;
+
+    private static final int OMNI_PROB = 32;
 
     private int rows;
 
     private int columns;
 
-    private Cell[][] cellGrid;
-
-    private Cell cell;
-
-    private final int herbiRange = 80;
-
-    private final int plantRange = 50;
-
-    private final int carniRange = 40;
-
-    private final int omniRange = 32;
-
-    private final int randGenRange = 100;
-
+    private Cell[][] grid;
+  
     /**
-     * Constructs the world.
-     *
-     * @param rows as int
-     * @param columns as int
+     * Constructs a World object.
+     * 
+     * @param rows Number of rows the world grid will have.
+     * @param columns Number of columns that the world will have.
      */
     public World(int rows, int columns) {
         this.rows = rows;
         this.columns = columns;
+        this.grid = new Cell[rows][columns];
     }
-
+    
     /**
-     * Puts Cells on the world.
-     * Adds appropriate number of Herbivores and Plants.
+     * Initializes the World by populating it with different life forms.
      */
     public void init() {
-        cellGrid = new Cell[rows][columns];
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                cell = new Cell(this, i, j);
-                cell.setEntity(makeEntity(cell));
-                cellGrid[i][j] = cell;
-            }
-        }
-    }
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.columns; j++) {
+                grid[i][j] = new Cell(this, i, j);
+                int randNum = RandomGenerator.nextNumber(RANDOM_GEN_LIMIT);
 
-    /**
-     * Retrieves the requested Cell from the specified location
-     * in the World.
-     *
-     * @param row as int
-     * @param col as int
-     * @return cell as Cell
-     */
-    public Cell getCellAt(int row, int col) {
-        return cellGrid[row][col];
-    }
-
-    /**
-     * Creates an entity such as a plant or
-     * herbivore.
-     *
-     * @param location the location of the cell.
-     * @return the entity type.
-     */
-    public Entity makeEntity(Cell location) {
-        int num = nextNumber(randGenRange);
-
-        if (num >= herbiRange) {
-            return new Herbivore(location);
-        } else if (num >= plantRange) {
-            return new Plant(location);
-        }
-//        else if (num >= carniRange) {
-//            return new Carnivore(location);
-//        } else if (num >= omniRange) {
-//            return new Omnivore(location);
-//        }
-        return new Empty(location);
-    }
-
-    /**
-     * Gets all entities in the world.
-     *
-     * @return An arraylist of entities in the world.
-     */
-    public ArrayList<Cell> getAllEntities() {
-        ArrayList<Cell> allEntities = new ArrayList<>();
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                cell = cellGrid[i][j];
-                if (cell.getCellType() != EntityType.EMPTY) {
-                    allEntities.add(cell);
+                if (randNum >= HERB_PROB) {
+                    grid[i][j].setEntity(
+                            new Herbivore(grid[i][j]));                    
+                } else if (randNum >= PLANT_PROB) {
+                    grid[i][j].setEntity(new Plant(grid[i][j]));
+                } else if (randNum >= CARN_PROB) {
+                    grid[i][j].setEntity(new Carnivore(grid[i][j]));
+                } else if (randNum >= OMNI_PROB) {
+                    grid[i][j].setEntity(new Omnivore(grid[i][j]));
                 }
+                grid[i][j].init();
             }
         }
-        return allEntities;
+        getAllAdjCells();
     }
 
     /**
-     * Removes dead Herbivores.
-     * Checks each plant to see if it seeds.
-     * Moves living Herbivores one Cell.
-     * Herbivores eat, if possible.
-     */
-    public void takeTurn() {
-        turnCount++;
-//        for (int i = 0; i < cellGrid.length; i++) {
-//            for (int j = 0; j < cellGrid[i].length; j++) {
-//                cell = cellGrid[i][j];
-//                if (!(cell.getEntity().hasMoved())) {
-//                    cell.getEntity().move();
-//                }
-//            }
-//        }
-        update();
-
-        for (int i = 0; i < cellGrid.length; i++) {
-            for (int j = 0; j < cellGrid[i].length; j++) {
-                cell = cellGrid[i][j];
-                cell.getEntity().resetMoved();
-            }
-        }
-
-        System.out.println("Turn number: " + turnCount);
-    }
-
-    /**
-     * Acquires all entities. It then checks if they're
-     * alive, and then moves them, reproduce, and remove.
-     */
-    public void update() {
-        ArrayList<Cell> entityList = getAllEntities();
-        for (Cell entities: entityList) {
-            if (!(entities.getEntity().hasMoved())) {
-                entities.getEntity().move();
-            }
-
-        }
-    }
-
-    /**
-     * Gets number of rows in World.
+     * Returns the cell at the specified row and column.
      *
-     * @return rows as int
+     * @param row
+     *          The row index of the cell.
+     * @param column
+     *          The column of the cell.
+     * @return The cell at the specified indices.
+     */
+    Cell getCellAt(int row, int column) {
+        return grid[row][column];
+    }
+
+    /**
+     * Returns the number of rows in the world grid.
+     *
+     * @return the number of rows.
      */
     public int getRowCount() {
         return rows;
     }
 
     /**
-     * Gets number of columns in World.
+     * Returns the number of columns in the world grid.
      *
-     * @return cols as int
+     * @return the number of columns.
      */
     public int getColumnCount() {
         return columns;
     }
+
+    /**
+     * Updates the world by taking turns, and flagging
+     * the life form if it has taken a turn.
+     */    
+    public void update() {
+        List<Lifeform> lifeforms = new ArrayList<>();
+
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.columns; j++) {
+                if (grid[i][j].getEntity() != null) {
+                    lifeforms.add(grid[i][j].getEntity());
+                }
+            }
+        }
+        for (Lifeform l : lifeforms) {
+            if (!l.isTurnTaken()) {
+                l.takeTurn();
+            }
+        }
+        for (Lifeform l : lifeforms) {
+            l.setTurnTaken(false);
+        }
+    }
+
+    /**
+     * Has each cell collect an array of their neighbouring cells
+     *      and store it as a data member.
+     */
+    private void getAllAdjCells() {
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.columns; j++) {
+                grid[i][j].getAdjacentCells();
+            }
+        }
+    }
+
 }

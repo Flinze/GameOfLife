@@ -1,86 +1,84 @@
-package ca.bcit.comp2526.a2a;
-import java.awt.Color;
-import java.util.ArrayList;
+package ca.bcit.comp2526.a2c;
 
-import static ca.bcit.comp2526.a2a.RandomGenerator.nextNumber;
+import java.awt.Color;
 
 /**
  * Plant.
  *
- * A plant is-a Entity, part of the world.
- *
- * @author  Felix Lin
- * @version 1.0
+ * A plant is-a life form. Can be eaten
+ * by Herbivores, and omnivores.
+ * 
+ * @author Felix Lin
+ * @version 2.0
  */
-public class Plant extends Entity {
+public class Plant extends Lifeform {
 
-    private Color cellColour;
+    private static final int PLANT_REQ_MATES = 2;
 
-    private Cell cell;
-
-    private final int minEmptyCells = 3;
-
-    private final int minPlantCells = 2;
-
+    private static final int PLANT_REQ_EMPTY = 3;
+    
     /**
-     * Constructor.
-     *
-     * @param location the location of the cell.
+     * Constructs a Plant object.
+     * 
+     * @param location the plant's starting location.
      */
     public Plant(Cell location) {
         super(location);
-        cell = location;
-        init();
+        setColor(Color.GREEN);
+        setEmptyCellsRequired(PLANT_REQ_EMPTY);
+        setMateCellsRequired(PLANT_REQ_MATES);
+        setFoodCellsRequired(0);
+        setLifeCount(1);
+        setType(LifeformType.PLANT);
     }
 
     /**
-     * Initializes the plant and sets
-     * the cell background to be green.
-     */
-    public void init() {
-        cellColour = Color.GREEN;
-    }
-
-    /**
-     * Gets the colour of the cell.
+     * Gives birth to new lifeform.
      *
-     * @return the cell colour.
+     * @param birthLocation
+     *              starting location of the new lifeform.
+     *
+     * @return a lifeform, specifically a plant.
      */
-    public Color getColor() {
-        return cellColour;
+    Lifeform giveBirth(Cell birthLocation) {
+        
+        return new Plant(birthLocation);
+    
     }
 
     /**
-     * Puts the plant on the specified cell.
-     *
-     * @param location the location of the cell to be
-     *                 placed on.
+     * Resets the life count.
      */
-    public void setCell(Cell location) {
-        this.cell = location;
+    void resetLifeCount() {
+        setLifeCount(1);
     }
 
     /**
-     * Seeds a new plant when there are at least 3
-     * empty neighbouring Cells and 2 plant neighbouring cells.
+     * Checks if there are any types that are edible.
      *
+     * @param lifeform
+     *          lifeform this object is trying to eat.
+     *
+     * @return if the food is edible.
+     */
+    public boolean isEdible(Lifeform lifeform) {
+        return false;
+    }
+
+
+    /**
+     * Empty override method so that the plant does not eat.
      */
     public void move() {
-        ArrayList<Cell> adjList = cell.getAdjacentCells();
-        ArrayList<Cell> plantList = getPlants(adjList);
-        ArrayList<Cell> emptyList = getEmpty(adjList);
-
-        int randIndex;
-        int numEmptyCell = emptyList.size();
-        int numPlantCell = plantList.size();
-
-        if ((numEmptyCell >= minEmptyCells)
-                && (numPlantCell >= minPlantCells)) {
-            randIndex = nextNumber(numEmptyCell);
-            Cell tmp = emptyList.get(randIndex);
-            tmp.setEntity(new Plant(tmp));
-            tmp.getEntity().setMoved();
-        }
-        setMoved();
     }
+
+    /**
+     * Override method so that the plant does not
+     * update its life count since it does not have a
+     * life count.
+     */
+    public void updateLifeCount() {
+        resetLifeCount();
+    }
+
 }

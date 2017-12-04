@@ -1,47 +1,48 @@
-package ca.bcit.comp2526.a2a;
+package ca.bcit.comp2526.a2c;
 
-// Import packages
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
+
 import javax.swing.JFrame;
 
 /**
- * Main.
  * Drives the program.
- * When user clicks on game window, a turn passes.
- *
- * @author  Felix Lin
- * @version 1.0
+ * 
+ * @author Felix Lin
+ * @version 2.0
  */
 public final class Main {
-
+    
     private static final Toolkit TOOLKIT;
+    
+    private static final int WORLD_SIZE = 25;
+    
+    private static final float SCREEN_AREA_CALC = 0.80f;
+    
+    private static final float SCREEN_AREA_PERCENT_UPPER = 100.0f;
 
     static {
         TOOLKIT = Toolkit.getDefaultToolkit();
     }
 
     /**
-     * Disallows the creation of any Main objects.
+     * Creates a main object.
      */
     private Main() {
     }
 
     /**
-     * Drives the program.
-     *
-     * @param argv as String[]
+     * Entry point for the program.
+     * @param argv
+     *          command line arguments
      */
     public static void main(final String[] argv) {
-        final int columns = 25;
-        final int rows = 25;
-
         final GameFrame frame;
         final World world;
 
         RandomGenerator.reset();
-        world = new World(rows, columns);
+        world = new World(WORLD_SIZE, WORLD_SIZE);
         world.init();
         frame = new GameFrame(world);
         position(frame);
@@ -49,29 +50,30 @@ public final class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
-
+    
     /**
-     * Sets size of frame.
-     *
-     * @param frame as GameFrame
+     * Positions the GameFrame object.
+     * 
+     * @param frame
+     *          GameFrame object to position.
      */
     private static void position(final GameFrame frame) {
         final Dimension size;
-        final float widthPercent = 0.80f;
-        final float heightPercent = 0.80f;
 
-        size = calculateScreenArea(widthPercent, heightPercent);
+        size = calculateScreenArea(SCREEN_AREA_CALC, SCREEN_AREA_CALC);
         frame.setSize(size);
         frame.setLocation(centreOnScreen(size));
     }
 
     /**
-     * Creates Point object as a function of screensize.
-     *
-     * @param size as Dimension
-     * @return new Point
+     * Centers the GameFrame object on screen.
+     * 
+     * @param size
+     *          Size of the GameFrame
+     * @return
+     *          Point containing calculated size
      */
-    private static Point centreOnScreen(final Dimension size) {
+    public static Point centreOnScreen(final Dimension size) {
         final Dimension screenSize;
 
         if (size == null) {
@@ -80,37 +82,40 @@ public final class Main {
 
         screenSize = TOOLKIT.getScreenSize();
 
-        return (new Point((screenSize.width - size.width)
-                / 2, (screenSize.height - size.height) / 2));
+        return (new Point((screenSize.width - size.width) / 2, 
+                (screenSize.height - size.height) / 2));
     }
 
     /**
-     * Calculates screen area.
-     *
-     * @param widthPercent as float
-     * @param heightPercent as float
-     * @return area as Dimension
+     * Calculates the screen area.
+     * 
+     * @param widthPercent
+     *          percentage of actual screen width desired
+     * @param heightPercent
+     *          percentage of actual screen height desired
+     * @return
+     *      new screen dimensions
      */
-    private static Dimension calculateScreenArea(final float widthPercent,
-                                                 final float heightPercent) {
+    public static Dimension calculateScreenArea(
+            final float widthPercent, final float heightPercent) {
         final Dimension screenSize;
         final Dimension area;
         final int width;
         final int height;
         final int size;
-        final float maxWidthPercent = 100.0f;
-        final float minWidthPercent = 0.0f;
 
-        if ((widthPercent <= minWidthPercent)
-                || (widthPercent > maxWidthPercent)) {
-            throw new IllegalArgumentException("widthPercent cannot be "
-                    + "<= 0 or > 100 - got: " + widthPercent);
+        if ((widthPercent <= 0.0f) 
+                || (widthPercent > SCREEN_AREA_PERCENT_UPPER)) {
+            throw new IllegalArgumentException(
+                    "widthPercent cannot be " 
+                            + "<= 0 or > 100 - got: " + widthPercent);
         }
 
-        if ((heightPercent <= minWidthPercent)
-                || (heightPercent > maxWidthPercent)) {
-            throw new IllegalArgumentException("heightPercent cannot be "
-                    + "<= 0 or > 100 - got: " + heightPercent);
+        if ((heightPercent <= 0.0f) 
+                || (heightPercent > SCREEN_AREA_PERCENT_UPPER)) {
+            throw new IllegalArgumentException(""
+                    + "heightPercent cannot be " 
+                            + "<= 0 or > 100 - got: " + heightPercent);
         }
 
         screenSize = TOOLKIT.getScreenSize();
