@@ -1,16 +1,18 @@
-package ca.bcit.comp2526.a2a;
-import java.util.Random;
+package ca.bcit.comp2526.a2c;
 @SuppressWarnings("ALL")
 /**
  * RandomGenerator.
- * Generates random numbers from an int[].
  *
- * @author  Felix Lin
- * @version 1.0
+ * @author Felix Lin
+ * @version 2.0
  */
 public final class RandomGenerator {
     private static final int[] NUMBERS;
 
+    /**
+     * Initalizes NUMBERS to be an array of int containing a
+     * pseudorandom number stream.
+     */
     static {
         NUMBERS = new int[] { -1155484576, -723955400, 1033096058, -1690734402, -1557280266, 1327362106, -1930858313,
                 502539523, -1728529858, -938301587, 1431162155, 1085665355, 1654374947, -1661998771, -65105105,
@@ -54,22 +56,19 @@ public final class RandomGenerator {
      * Creates a Random Generator.
      */
     private RandomGenerator() {
-
-        Random generator = new Random();
     }
 
     /**
-     * Resets the generator.
+     * Resets the number generator.
      */
     public static void reset() {
         next = 0;
     }
 
     /**
-     * Generates a random number.
-     *
-     * @param max the maximum value that is allowed to be generated.
-     * @return a randomly generated number.
+     * Generates a random number between 0 and max-1 inclusive.
+     * @param max the upper bound
+     * @return a positive integer modulo max
      */
     public static int nextNumber(final int max) {
         try {

@@ -1,92 +1,81 @@
-package ca.bcit.comp2526.a2a;
+package ca.bcit.comp2526.a2c;
+
+
+import java.awt.Color;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
-import java.awt.Color;
-import java.awt.Point;
-import java.util.ArrayList;
-import javax.swing.BorderFactory;
 
 /**
  * Cell.
  *
- * One square in World.
- * Can hold Plant, Herbivore, nothing.
- *
- * @author  Felix Lin
- * @version 1.0
+ * A Cell represents an area where the lifeform
+ * is placed in.
+ * 
+ * @author Felix Lin
+ * @version 2.0
  */
+@SuppressWarnings("serial")
 public class Cell extends JPanel {
-
-    private int xCoordinate;
-
-    private int yCoordinate;
 
     private World world;
 
-    private Color cellColour;
+    private int row;
 
-    private Entity entity;
+    private int column;
 
-    private Point location;
+    private Color color;
 
-    private ArrayList<Cell> cellList;
+    private Lifeform entity;
+
 
     /**
-     * Constructor.
-     *
-     * @param world as World
-     * @param row as int
-     * @param column as int
+     * Constructs a Cell.
+     * 
+     * @param world
+     *          The world where the cell exists.
+     * @param row
+     *          The row of where the cell exists.
+     * @param column
+     *          The column of where the cell exists.
      */
     public Cell(World world, int row, int column) {
+        this.row = row;
+        this.column = column;
         this.world = world;
-        xCoordinate = row;
-        yCoordinate = column;
-        getCell().setCell();
     }
-
+    
     /**
-     * Sets up layout.
+     * Initializes the cell by setting a background
+     * color.
      */
-    protected void init() {
-        setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        if (entity != null) {
-            setBackground(entity.getColor());
+    public void init() {
+        if (entity == null) {
+            this.setBackground(Color.WHITE);
+        } else {
+            this.setBackground(color);
         }
     }
-
+    
     /**
-     * Sets the entity into the cell.
-     * @param entity A entity such as a plant or herbivore.
+     * Returns the Content object inhabiting the Cell.
+     * @return
+     *      This Cell's Content entity.
      */
-    public void setEntity(Entity entity) {
-        this.entity = entity;
-        init();
-    }
-
-    /**
-     * Gets the entity of the Cell.
-     *
-     * @return the entity of the cell.
-     */
-    public Entity getEntity() {
+    public Lifeform getEntity() {
         return entity;
     }
-
+    
     /**
-     * Sets the location of the Cell on the World.
+     * Sets content object as entity of this Cell.
+     * @param l
+     *          new entity.
      */
-    public void setCell() {
-        location = new Point(xCoordinate, yCoordinate);
-    }
-
-    /**
-     * Returns location of Cell on the World.
-     *
-     * @return point as Point
-     */
-    public Point getLocation() {
-        return location;
+    public void setEntity(Lifeform l) {
+        this.entity = l;
+        if (entity != null) {
+            entity.init();
+        }
     }
 
     /**
@@ -95,58 +84,43 @@ public class Cell extends JPanel {
      * Sides return 5 Cells.
      * All others return 8 Cells.
      *
-     * @return cell[] positions of adjacent Cells
+     * @return ArrayList of adjacent cells.
      */
     public ArrayList<Cell> getAdjacentCells() {
-        cellList = new ArrayList<>();
-        for (int i = location.x - 1; i <= location.x + 1; i++) {
-            for (int j = location.y - 1; j <= location.y + 1; j++) {
-                if ((i >= 0 && i < world.getRowCount()) && (j >= 0
-                        && j < world.getColumnCount())) {
-                    if (!(i == location.x && j == location.y)) {
-                        cellList.add(world.getCellAt(i, j));
-                    }
+        ArrayList<Cell> adjacentCells = new ArrayList<>();
+
+        for (int i = this.row - 1; i <= this.row + 1; i++) {
+            for (int j = this.column - 1; j <= this.column + 1; j++) {
+                if (j == this.column && i == this.row) {
+                    continue;
+                }
+                if (i >= 0 && j >= 0
+                        && j < world.getRowCount()
+                        && i < world.getColumnCount()) {
+                    adjacentCells.add(world.getCellAt(i, j));
                 }
             }
         }
-        return cellList;
+        return adjacentCells;
     }
 
     /**
-     * Gets Cell type. (incomplete, not sure if
-     * should have)
-     *
-     * @return Cell
+     * Sets the background colour of the cell.
+     * @param color
+     *          New background colour to set.
      */
-    public EntityType getCellType() {
-            if (entity.getColor() == Color.YELLOW) {
-                return EntityType.HERBIVORE;
-            } else if (entity.getColor() == Color.GREEN) {
-                return EntityType.PLANT;
-            } else if (entity.getColor() == Color.WHITE) {
-                return EntityType.EMPTY;
-            }
-        return EntityType.EMPTY;
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     /**
-     * Gets the cell.
-     *
-     * @return the cell.
+     * Checks if the cell is empty.
+     * 
+     * @return
+     *      True, if cell is considered empty.
      */
-    public Cell getCell() {
-        return this;
+    public boolean isEmpty() {
+        return entity == null;
     }
 
-    /**
-     * Removes Cell inhabitant.
-     * Replaces with empty cell.
-     *
-     * @param cell The cell to be replaced with.
-     * @return replaces the with an empty cell.
-     */
-    protected Cell removeCell(Cell cell) {
-        cell.setEntity(new Empty(cell));
-        return cell;
-    }
 }

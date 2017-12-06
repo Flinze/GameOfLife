@@ -1,28 +1,36 @@
-package ca.bcit.comp2526.a2a;
+package ca.bcit.comp2526.a2c;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
  * TurnListener.
- * Implements mouseClicked().
  *
- * @author  Felix Lin
- * @version 1.0
+ * An object that listens for mouse clicks, and takes a
+ * turn in the world when the mouse is clicked.
+ * 
+ * @author Felix Lin
+ * @version 2.0
  */
 public class TurnListener extends MouseAdapter {
 
     private GameFrame gameFrame;
 
     /**
-     * Constructor for turn TurnListener.
-     * @param game the GameFrame.
+     * Constructs a turn listener.
+     * 
+     * @param game the gameFrame.
      */
     public TurnListener(GameFrame game) {
-        gameFrame = game;
+        this.gameFrame = game;
     }
 
-    @Override
+    /** 
+     * Takes a turn in the game frame whenever
+     * the mouse is clicked on panel.
+     *
+     * @param e mouse click event.
+     */
     public void mouseClicked(MouseEvent e) {
         gameFrame.takeTurn();
     }
