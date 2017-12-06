@@ -1,6 +1,7 @@
 package ca.bcit.comp2526.a2c;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import static ca.bcit.comp2526.a2c.RandomGenerator.nextNumber;
  * @author Felix Lin
  * @version 2.0
  */
-public abstract class Lifeform implements Edible {
+public abstract class Lifeform implements Edible, Serializable {
 
     private Cell location;
 

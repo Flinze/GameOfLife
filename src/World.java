@@ -1,6 +1,8 @@
 package ca.bcit.comp2526.a2c;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -12,7 +14,7 @@ import java.util.List;
  * @version 2.0
  *
  */
-public class World {
+public class World implements Serializable {
 
     private static final int RANDOM_GEN_LIMIT = 100;
 
@@ -130,6 +132,52 @@ public class World {
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.columns; j++) {
                 grid[i][j].getAdjacentCells();
+            }
+        }
+    }
+
+    /**
+     * Updates the world by taking turns
+     * using a doubly linked list.
+     */
+    public void updateLinkedList() {
+        DoubleLinkedList<Lifeform> lifeforms = new DoubleLinkedList<>();
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.columns; j++) {
+                if (!grid[i][j].isEmpty()) {
+                    try {
+                        lifeforms.addToEnd(grid[i][j].getEntity());
+                    } catch (CouldNotAddException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        Iterator<Lifeform> iterator = lifeforms.iterator();
+        while (iterator.hasNext()) {
+            Lifeform l = iterator.next();
+            if (!l.isTurnTaken()) {
+                l.takeTurn();
+            }
+        }
+        iterator = lifeforms.iterator();
+
+        while (iterator.hasNext()) {
+            Lifeform l = iterator.next();
+            l.setTurnTaken(false);
+        }
+    }
+
+    /**
+     * Reinitializes the world following being loaded from a save state.
+     */
+    public void reinit() {
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.columns; j++) {
+                if (!grid[i][j].isEmpty()) {
+                    grid[i][j].getEntity().setLocation(grid[i][j]);
+                }
+                grid[i][j].init();
             }
         }
     }

@@ -1,6 +1,5 @@
 package ca.bcit.comp2526.a2c;
 
-
 /**
  * LifeformType.
  *
@@ -30,5 +29,4 @@ public enum LifeformType {
      * An Omnivore lifeofrm.
      */
     OMNIVORE
-
 }

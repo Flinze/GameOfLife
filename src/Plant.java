@@ -41,9 +41,7 @@ public class Plant extends Lifeform {
      * @return a lifeform, specifically a plant.
      */
     Lifeform giveBirth(Cell birthLocation) {
-        
         return new Plant(birthLocation);
-    
     }
 
     /**

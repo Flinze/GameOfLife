@@ -22,26 +22,6 @@ public class DoubleLinkedList<E> implements Serializable, Iterable<E> {
     private int size;
 
     /**
-     * Drives the double linked list class.
-     *
-     * @param args command-line arguments.
-     *
-     * @throws CouldNotAddException
-     *  throws an exception when a node cannot be added.
-     * @throws CouldNotRemoveException 
-     *  throws an exception the node cannot be removed.
-     */
-    public static void main(String[] args)
-            throws CouldNotAddException, CouldNotRemoveException {
-        DoubleLinkedList<Integer> list = new DoubleLinkedList<Integer>();
-//        tests
-//        list.addToFront(5);
-//        list.addToFront(6);
-//        list.addToFront(51);
-//        list.print();
-    }
-
-    /**
      * Node.
      *
      * A inner class, that contains the nodes.
